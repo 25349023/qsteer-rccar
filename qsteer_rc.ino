@@ -1,7 +1,7 @@
 #include "PinDefinitionsAndMore.h"
 #include <IRremote.hpp>
 
-const unsigned int CMD_PREFIX[2] = {1600, 400};
+const unsigned int START[2] = {1600, 400};
 
 enum class Band {
     A, B, C, D
@@ -19,7 +19,7 @@ enum class Command {
     TURBO_FWD, TURBO_BACK, TURBO_FWD_LEFT, TURBO_FWD_RIGHT, TURBO_BACK_LEFT, TURBO_BACK_RIGHT
 };
 
-const unsigned int SIGNAL[][8] = {
+const unsigned int COMMANDS[][8] = {
     {400, 400, 400, 400, 400, 400, 800, 400},  // FWD
     {400, 400, 400, 400, 800, 400, 400, 400},  // BACK
     {400, 400, 400, 400, 800, 400, 800, 400},  // LEFT
@@ -39,7 +39,10 @@ const unsigned int SIGNAL[][8] = {
 
 Band band;
 
+const int TURBO_SW = 4;
+
 void setup() {
+    pinMode(TURBO_SW, INPUT_PULLUP);
     Serial.begin(115200);
     band = Band::A;
 }
@@ -47,39 +50,64 @@ void setup() {
 void loop() {
     int x = to_digital(analogRead(0)); 
     int y = to_digital(analogRead(1));
+    bool turbo = !digitalRead(TURBO_SW);
 
     Command c = Command::NOOP;
 
-    if (x == 0) {
-        if (y == -1) {
-            c = Command::FORWARD;
-        } else if (y == 1) {
-            c = Command::BACKWARD;
+    if (turbo) {
+        if (x == 0) {
+            if (y == -1) {
+                c = Command::TURBO_FWD;
+            } else if (y == 1) {
+                c = Command::TURBO_BACK;
+            }
+        } else if (x == 1) {
+            if (y == -1) {
+                c = Command::TURBO_FWD_RIGHT;
+            } else if (y == 1) {
+                c = Command::TURBO_BACK_RIGHT;
+            } else {
+                c = Command::RIGHT;
+            }
+        } else if (x == -1) {
+            if (y == -1) {
+                c = Command::TURBO_FWD_LEFT;
+            } else if (y == 1) {
+                c = Command::TURBO_BACK_LEFT;
+            } else {
+                c = Command::LEFT;
+            }
         }
-    } else if (x == 1) {
-        if (y == -1) {
-            c = Command::FWD_RIGHT;
-        } else if (y == 1) {
-            c = Command::BACK_RIGHT;
-        } else {
-            c = Command::RIGHT;
-        }
-    } else if (x == -1) {
-        if (y == -1) {
-            c = Command::FWD_LEFT;
-        } else if (y == 1) {
-            c = Command::BACK_LEFT;
-        } else {
-            c = Command::LEFT;
+    } else {
+        if (x == 0) {
+            if (y == -1) {
+                c = Command::FORWARD;
+            } else if (y == 1) {
+                c = Command::BACKWARD;
+            }
+        } else if (x == 1) {
+            if (y == -1) {
+                c = Command::FWD_RIGHT;
+            } else if (y == 1) {
+                c = Command::BACK_RIGHT;
+            } else {
+                c = Command::RIGHT;
+            }
+        } else if (x == -1) {
+            if (y == -1) {
+                c = Command::FWD_LEFT;
+            } else if (y == 1) {
+                c = Command::BACK_LEFT;
+            } else {
+                c = Command::LEFT;
+            }
         }
     }
 
-    // TODO: add TURBO mode support
-
     if (c != Command::NOOP) {
-        IrSender.sendRaw(CMD_PREFIX, sizeof(CMD_PREFIX) / sizeof(CMD_PREFIX[0]), 38);
+        IrSender.sendRaw(START, sizeof(START) / sizeof(START[0]), 38);
         IrSender.sendRaw(BAND_PREFIX[(int)band], sizeof(BAND_PREFIX[0]) / sizeof(BAND_PREFIX[0][0]), 38);
-        IrSender.sendRaw(SIGNAL[(int)c], sizeof(SIGNAL[0]) / sizeof(SIGNAL[0][0]), 38);
+        IrSender.sendRaw(COMMANDS[(int)c], sizeof(COMMANDS[0]) / sizeof(COMMANDS[0][0]), 38);
     }
 
     delay(20);
