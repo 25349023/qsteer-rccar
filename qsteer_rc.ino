@@ -39,6 +39,8 @@ const unsigned int COMMANDS[][8] = {
 
 Band band;
 
+const int X_AXIS = 0;
+const int Y_AXIS = 1;
 const int TURBO_SW = 4;
 
 void setup() {
@@ -48,8 +50,8 @@ void setup() {
 }
 
 void loop() {
-    int x = to_digital(analogRead(0)); 
-    int y = to_digital(analogRead(1));
+    int x = to_digital(analogRead(X_AXIS)); 
+    int y = to_digital(analogRead(Y_AXIS));
     bool turbo = !digitalRead(TURBO_SW);
 
     Command c = Command::NOOP;
