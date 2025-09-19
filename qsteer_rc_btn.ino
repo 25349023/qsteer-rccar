@@ -47,13 +47,17 @@ const int RIGHT_BTN = 8;
 
 void setup() {
     pinMode(TURBO_SW, INPUT_PULLUP);
+    pinMode(FWD_BTN, INPUT_PULLUP);
+    pinMode(BACK_BTN, INPUT_PULLUP);
+    pinMode(LEFT_BTN, INPUT_PULLUP);
+    pinMode(RIGHT_BTN, INPUT_PULLUP);
     Serial.begin(115200);
     band = Band::A;
 }
 
 void loop() {
-    int x = !digitalRead(BACK_BTN) - !digitalRead(FWD_BTN);
-    int y = !digitalRead(RIGHT_BTN) - !digitalRead(LEFT_BTN);
+    int x = !digitalRead(RIGHT_BTN) - !digitalRead(LEFT_BTN);
+    int y = !digitalRead(BACK_BTN) - !digitalRead(FWD_BTN);
     bool turbo = !digitalRead(TURBO_SW);
 
     Command c = Command::NOOP;
@@ -112,6 +116,10 @@ void loop() {
         IrSender.sendRaw(START, sizeof(START) / sizeof(START[0]), 38);
         IrSender.sendRaw(BAND_PREFIX[(int)band], sizeof(BAND_PREFIX[0]) / sizeof(BAND_PREFIX[0][0]), 38);
         IrSender.sendRaw(COMMANDS[(int)c], sizeof(COMMANDS[0]) / sizeof(COMMANDS[0][0]), 38);
+        Serial.print(x);
+        Serial.print(" ");
+        Serial.print(y);
+        Serial.println();
     }
 
     delay(20);
