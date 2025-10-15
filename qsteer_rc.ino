@@ -1,40 +1,23 @@
 #include "PinDefinitionsAndMore.h"
 #include <IRremote.hpp>
 
-const unsigned int START[2] = {1600, 400};
+// Uncomment the following line if you are using a MCU with an 8MHz clock (e.g., 3.3V Arduino Pro Mini).
+// See the README.md for details.
+// #define CLK_RATE_8MHZ
+
+#ifdef CLK_RATE_8MHZ
+#include "command_8mhz.h"
+#else
+#include "command_16mhz.h"
+#endif
 
 enum class Band {
     A, B, C, D
 };
 
-const unsigned int BAND_PREFIX[4][4] = {
-    {400, 400, 400, 400},
-    {400, 400, 800, 400},
-    {800, 400, 400, 400},
-    {800, 400, 800, 400},
-};
-
 enum class Command {
     NOOP = -1, FORWARD, BACKWARD, LEFT, RIGHT, FWD_LEFT, FWD_RIGHT, BACK_LEFT, BACK_RIGHT,
     TURBO_FWD, TURBO_BACK, TURBO_FWD_LEFT, TURBO_FWD_RIGHT, TURBO_BACK_LEFT, TURBO_BACK_RIGHT
-};
-
-const unsigned int COMMANDS[][8] = {
-    {400, 400, 400, 400, 400, 400, 800, 400},  // FWD
-    {400, 400, 400, 400, 800, 400, 400, 400},  // BACK
-    {400, 400, 400, 400, 800, 400, 800, 400},  // LEFT
-    {400, 400, 800, 400, 400, 400, 400, 400},  // RIGHT
-    {400, 400, 800, 400, 800, 400, 400, 400},  // FWD_LEFT
-    {400, 400, 800, 400, 800, 400, 800, 400},  // FWD_RIGHT
-    {800, 400, 400, 400, 800, 400, 400, 400},  // BACK_LEFT
-    {800, 400, 400, 400, 800, 400, 800, 400},  // BACK_RIGHT
-
-    {400, 400, 800, 400, 400, 400, 800, 400},  // TURBO_FWD
-    {800, 400, 800, 400, 400, 400, 400, 400},  // TURBO_BACK
-    {800, 400, 400, 400, 400, 400, 400, 400},  // TURBO_FWD_LEFT
-    {800, 400, 400, 400, 400, 400, 800, 400},  // TURBO_FWD_RIGHT
-    {800, 400, 800, 400, 400, 400, 800, 400},  // TURBO_BACK_LEFT
-    {800, 400, 800, 400, 800, 400, 400, 400},  // TURBO_BACK_RIGHT
 };
 
 Band band;
@@ -107,9 +90,9 @@ void loop() {
     }
 
     if (c != Command::NOOP) {
-        IrSender.sendRaw(START, sizeof(START) / sizeof(START[0]), 38);
-        IrSender.sendRaw(BAND_PREFIX[(int)band], sizeof(BAND_PREFIX[0]) / sizeof(BAND_PREFIX[0][0]), 38);
-        IrSender.sendRaw(COMMANDS[(int)c], sizeof(COMMANDS[0]) / sizeof(COMMANDS[0][0]), 38);
+        IrSender.sendRaw(START, sizeof(START) / sizeof(START[0]), 38 * FREQ_RATIO);
+        IrSender.sendRaw(BAND_PREFIX[(int)band], sizeof(BAND_PREFIX[0]) / sizeof(BAND_PREFIX[0][0]), 38 * FREQ_RATIO);
+        IrSender.sendRaw(COMMANDS[(int)c], sizeof(COMMANDS[0]) / sizeof(COMMANDS[0][0]), 38 * FREQ_RATIO);
     }
 
     delay(20);
