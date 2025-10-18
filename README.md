@@ -68,6 +68,15 @@ To apply this workaround on 8 MHz MCUs:
 2. In the Arduino IDE, select a processor variant with a **16 MHz** clock. For example:
     ![Processor selection screenshot](image.png)
 
+## Gallery
+
+### Demo
+
+![Animated demo of the controller in use](gallery/demo.gif)
+
+### Prototype and Final Assembly
+
+![Prototype and final assembly of the RC controller](gallery/qsteer.jpeg)
 
 ## References
 
