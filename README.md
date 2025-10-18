@@ -51,6 +51,16 @@ This Arduino project emulates the infrared (IR) controller for the Choro Q Q-Ste
 - Adjust analog thresholds in `to_digital()` (joystick mode)
 - Change `band` variable in `setup()` to select frequency band
 
+## Gallery
+
+### Demo
+
+![Animated demo of the controller in use](gallery/demo.gif)
+
+### Prototype and Final Assembly
+
+![Prototype and final assembly of the RC controller](gallery/qsteer.jpeg)
+
 ## Notes on MCU Clock Frequency
 
 The [IRremote FAQ](https://github.com/Arduino-IRremote/Arduino-IRremote#minimal-cpu-clock-frequency) notes that 8 MHz AVR MCUs may have issues generating correct PWM for IR signals. The recommended fix is to enable hardware-generated PWM by `#define SEND_PWM_BY_TIMER`.
@@ -67,16 +77,6 @@ To apply this workaround on 8 MHz MCUs:
 
 2. In the Arduino IDE, select a processor variant with a **16 MHz** clock. For example:
     ![Processor selection screenshot](image.png)
-
-## Gallery
-
-### Demo
-
-![Animated demo of the controller in use](gallery/demo.gif)
-
-### Prototype and Final Assembly
-
-![Prototype and final assembly of the RC controller](gallery/qsteer.jpeg)
 
 ## References
 
